@@ -1,0 +1,62 @@
+! Urxvt Settings
+
+!General
+urxvt*loginShell: true
+urxvt*scrollstyle:false
+urxvt*secondaryScroll: false
+urxvt*jumpScroll: true
+urxvt*saveLines: 65535
+urxvt*cursorBlank: false
+urxvt*urgentOnBell: true
+urxvt*override-redirect: false
+urxvt*borderLess: false
+u*internalBorder: 0
+urxvt*externalBorder: 0
+
+!Extensions
+urxvt*perl-lib: /usr/lib/urxvt/perl/
+urxvt*perl-ext-common: default,matcher,searchable-scrollback,clipboard,font-size
+urxvt*url-launcher: /usr/bin/xdg-open
+URxvt.colorUL: #4682B4
+urxvt*matcher.button: 1
+URxvt*keysym.Mod4-c: perl:clipboard:copy
+URxvt*keysym.Mod4-v: perl:clipboard:paste
+URxvt*keysym.Mod4-V: perl:clipboard:paste_escaped
+URxvt*clipboard.autocopy:true
+URxvt*clipboard.copycmd: xclip -i -selection clipboard
+URxvt*clipboard.pastecmd: xclip -o -selection clipboard
+URxvt*keysym.C-Up:   font-size:increase
+URxvt*keysym.C-Down: font-size:decrease
+URxvt*keysym.C-S-Down: font-size:decglobal
+
+URxvt*iso14755: False
+
+!Scrolling Behavior
+urxvt.scrollstyle: plain
+! do not scroll with output
+URxvt*scrollTtyOutput: false
+
+! scroll in relation to buffer (with mouse scroll or Shift+Page Up)
+URxvt*scrollWithBuffer: true
+
+! scroll back to the bottom on keypress
+URxvt*scrollTtyKeypress: true
+
+!Appearance
+urxv*colorMode: on
+urxvt*cursorBlink: true
+urxvt*cursorUnderline: false
+urxvt*underlineColor: #8ebdde
+urxvt*highlightColor: #8ebdde
+urxvt*highlightTextColor: #070707
+!urxvt*font: xft:Droid Sans Mono:size=10
+!urxvt*font: xft:Terminus:size=10
+!URxvt*font: xft:terminus:pixelsize=28
+!URxvt*boldFont: xft:terminus:bold:pixelsize=28
+URxvt*font:         xft:Hack:size=9,xft:Symbola
+URxvt.boldFont:     xft:Hack-Bold:size=9:weight=bold,xft:Symbola
+URxvt.italicFont:   xft:Hack-Italic:size=9:slant=italic,xft:Symbola
+
+urxvt*cursorColor: #DCDCCC
+
+urxvt*depth: 32
