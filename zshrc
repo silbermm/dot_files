@@ -2,8 +2,8 @@
 ZSH=$HOME/.oh-my-zsh/
 
 #ZSH_THEME="half-life"
-ZSH_THEME="simple"
-#ZSH_THEME="agnoster"
+#ZSH_THEME="simple"
+ZSH_THEME="agnoster"
 #ZSH_THEME="kolo"
 #ZSH_THEME="robbyrussell"
 
@@ -50,7 +50,7 @@ plugins=(git vi-mode mix)
 # User configuration
 
 export PATH=$HOME/bin:/usr/local/bin:$PATH
-export PATH=$HOME/.gem/ruby/2.3.0/bin:$HOME/.local/bin:$PATH
+export PATH=$HOME/.gem/ruby/2.5.0/bin:$HOME/.local/bin:$HOME/.cargo/bin:$PATH
 export DEFAULT_USER=silbermm
 
 # Preferred editor for local and remote sessions
@@ -95,3 +95,4 @@ if [ -f ~/.zsh/zshprivate ]; then
 else
     print "404: ~/.zsh/zshprivate not found."
 fi
+fpath+=~/.zfunc

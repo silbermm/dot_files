@@ -7,7 +7,7 @@ fi
 xset +dpms
 xset dpms 0 0 300
 eval $(ssh-agent)
-pgrep redshift &> /dev/null || redshift &> /dev/null &
-exec awesome
-#exec xmonad
+# pgrep redshift &> /dev/null || redshift &> /dev/null &
+#exec awesome
+exec gnome-session
 #exec $1

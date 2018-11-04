@@ -25,8 +25,15 @@ set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
 Plugin 'VundleVim/Vundle.vim'
 Plugin 'Xuyuanp/nerdtree-git-plugin'
-Plugin 'slashmili/alchemist.vim'
 call vundle#end()
+
+call plug#begin('~/.vim/plugged')
+  Plug 'tpope/vim-dadbod'
+  Plug 'tpope/vim-dispatch'
+  Plug 'w0rp/ale'
+  Plug 'slashmili/alchemist.vim'
+  Plug 'slashmili/alchemist.vim'
+call plug#end()
 
 set showcmd
 set showmode
@@ -43,6 +50,10 @@ set incsearch
 
 set wrap
 set linebreak
+
+let g:ale_linters = {
+\   'haskell': ['hlint'],
+\}
 
 if v:version >= 703
   set undodir=~/.vim/undofiles
@@ -182,6 +193,18 @@ set cm=blowfish2
 set viminfo=
 set nobackup
 set nowritebackup
+
+" The Silver Searcher
+if executable('ag')
+  " Use ag over grep
+  set grepprg=ag\ --nogroup\ --nocolor
+
+  " Use ag in CtrlP for listing files. Lightning fast and respects .gitignore
+  let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
+
+  " ag is fast enough that CtrlP doesn't need to cache
+  let g:ctrlp_use_caching = 0
+endif
 
 function! StatuslineTrailingSpaceWarning()
   if !exists("b:statusline_trailing_space_warning")
