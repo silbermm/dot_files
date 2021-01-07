@@ -18,21 +18,21 @@ set smartcase
 " Makes search act like search in modern browsers
 set incsearch
 
-execute pathogen#infect()
-
-" set the runtime path to include Vundle and initialize
-set rtp+=~/.vim/bundle/Vundle.vim
-call vundle#begin()
-Plugin 'VundleVim/Vundle.vim'
-Plugin 'Xuyuanp/nerdtree-git-plugin'
-call vundle#end()
-
 call plug#begin('~/.vim/plugged')
-  Plug 'tpope/vim-dadbod'
+  Plug 'preservim/nerdtree'
   Plug 'tpope/vim-dispatch'
-  Plug 'w0rp/ale'
-  Plug 'slashmili/alchemist.vim'
-  Plug 'slashmili/alchemist.vim'
+  Plug 'tpope/vim-fugitive'
+  Plug 'hashivim/vim-terraform'
+  Plug 'vim-airline/vim-airline'
+  Plug 'vim-airline/vim-airline-themes'
+  Plug 'dense-analysis/ale'
+  Plug 'morhetz/gruvbox'
+  Plug 'Xuyuanp/nerdtree-git-plugin'
+  Plug 'elixir-editors/vim-elixir'
+  Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+  Plug 'junegunn/fzf.vim'
+  Plug 'neoclide/coc.nvim', {'branch': 'release'}
+  Plug 'vim-test/vim-test'
 call plug#end()
 
 set showcmd
@@ -51,8 +51,11 @@ set incsearch
 set wrap
 set linebreak
 
+let g:ale_fix_on_save = 1
 let g:ale_linters = {
 \   'haskell': ['hlint'],
+\   'elixir': ['mix_format'],
+\   'go': ['goimports']
 \}
 
 if v:version >= 703
@@ -82,8 +85,7 @@ set sidescroll=1
 
 syntax enable
 set background=dark
-colorscheme solarized
-"set ttymouse=xterm2
+colorscheme gruvbox
 
 "highlight the current line and column
 set cursorline
@@ -97,17 +99,97 @@ set hidden
 " make gb select the last pasted text
 nnoremap <expr> gb '`[' . strpart(getregtype(), 0, 1) . '`]'
 
+inoremap jk <ESC>
+
+" coc settings
+if has("patch-8.1.1564")
+    " Recently vim can merge signcolumn and number column into one
+ set signcolumn=number
+else
+ set signcolumn=yes
+endif
+
+" Use <c-space> to trigger completion.
+if has('nvim')
+ inoremap <silent><expr> <c-space> coc#refresh()
+else
+ inoremap <silent><expr> <c-@> coc#refresh()
+endif
+
+inoremap <silent><expr> <TAB>
+      \ pumvisible() ? "\<C-n>" :
+      \ <SID>check_back_space() ? "\<TAB>" :
+      \ coc#refresh()
+inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+
+" Use <c-space> to trigger completion.
+if has('nvim')
+  inoremap <silent><expr> <c-space> coc#refresh()
+else
+  inoremap <silent><expr> <c-@> coc#refresh()
+endif
+
+" Make <CR> auto-select the first completion item and notify coc.nvim to
+" format on enter, <cr> could be remapped by other vim plugin
+inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm()
+                              \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+
+" GoTo code navigation.
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> gi <Plug>(coc-implementation)
+nmap <silent> gr <Plug>(coc-references)
+
+" Use K to show documentation in preview window.
+nnoremap <silent> K :call <SID>show_documentation()<CR>
+
+function! s:show_documentation()
+  if (index(['vim','help'], &filetype) >= 0)
+    execute 'h '.expand('<cword>')
+  elseif (coc#rpc#ready())
+    call CocActionAsync('doHover')
+  else
+    execute '!' . &keywordprg . " " . expand('<cword>')
+  endif
+endfunction
+
+" Highlight the symbol and its references when holding the cursor.
+autocmd CursorHold * silent call CocActionAsync('highlight')
+
+" Symbol renaming.
+nmap <leader>rn <Plug>(coc-rename)
+
+" Formatting selected code.
+xmap <leader>f  <Plug>(coc-format-selected)
+nmap <leader>f  <Plug>(coc-format-selected)
+
+augroup mygroup
+  autocmd!
+  " Setup formatexpr specified filetype(s).
+  autocmd FileType typescript,json setl formatexpr=CocAction('formatSelected')
+  " Update signature help on jump placeholder.
+  autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
+augroup end
+
+" Applying codeAction to the selected region.
+" Example: `<leader>aap` for current paragraph
+xmap <leader>a  <Plug>(coc-codeaction-selected)
+nmap <leader>a  <Plug>(coc-codeaction-selected)
+
+" Remap keys for applying codeAction to the current buffer.
+nmap <leader>ac  <Plug>(coc-codeaction)
+" Apply AutoFix to problem on the current line.
+nmap <leader>qf  <Plug>(coc-fix-current)
+
 " ================ Turn Off Swap Files ==============
 set noswapfile
 set nobackup
 set nowb
 
 "statusline setup
-"let g:airline_theme='minimalist'
-let g:airline_theme='solarized'
-"let g:airline_theme='papercolor'
+let g:airline_theme='gruvbox'
 let g:airline_powerline_fonts = 1
-set statusline =%#identifier#
+set statusline=%#identifier#
 set statusline+=[%t] "tail of the filename
 set statusline+=%*
 
@@ -142,7 +224,6 @@ set statusline+=%*
 set statusline+=%{StatuslineTrailingSpaceWarning()}
 set statusline+=%{StatuslineLongLineWarning()}
 set statusline+=%#warningmsg#
-set statusline+=%{SyntasticStatuslineFlag()}
 set statusline+=%*
 
 "display a warning if &paste is set
@@ -157,54 +238,33 @@ set statusline+=%l/%L "cursor line/total lines
 set statusline+=\ %P "percent through file
 set laststatus=2
 
-let g:syntastic_always_populate_loc_list = 1
-"let g:syntastic_auto_loc_list = 1
-"let g:syntastic_loc_list_height = 5
-let g:syntastic_check_on_open = 1
-let g:syntastic_check_on_wq = 1
-let g:syntastic_javascript_checkers = ['eslint']
-let g:syntastic_typescript_checkers = ['tslint']
-let g:syntastic_error_symbol = '❌'
-let g:syntastic_style_error_symbol = '⁉️'
-let g:syntastic_warning_symbol = '⚠️'
-"let g:syntastic_style_warning_symbol =
-
-highlight link SyntasticErrorSign SignColumn
-highlight link SyntasticWarningSign SignColumn
-highlight link SyntasticStyleErrorSign SignColumn
-highlight link SyntasticStyleWarningSign SignColumn
-
 let g:vim_markdown_folding_disabled=1
 let g:notes_directories = ['~/notes']
 let g:notes_shadowdir = "~/.vim/bundle/vim-notes/misc/notes/shadow/"
 
 autocmd cursorhold,bufwritepost * unlet! b:statusline_trailing_space_warning
 autocmd BufNewFile,BufReadPost *.md set filetype=markdown
-autocmd FileType cs setlocal omnifunc=OmniSharp#Complete
 
-"Remap CtrlPTag to leader . for ease of use
-nnoremap <leader>. :CtrlPTag<cr>
+"Remap FZF to leader . for ease of use
+nnoremap <leader>. :FZF<cr>
+nnoremap <leader>b :Buffer .<cr>
 
 " Toggle paste mode on and off
 map <leader>pp :setlocal paste!<cr>
+
+" Test shortcuts
+let test#strategy = "dispatch"
+nmap <silent> <leader>tn :TestNearest<CR>
+nmap <silent> <leader>tf :TestFile<CR>
+nmap <silent> <leader>ts :TestSuite<CR>
+nmap <silent> <leader>tl :TestLast<CR>
+nmap <silent> <leader>tv :TestVisit<CR>
 
 "Encryption Parameters
 set cm=blowfish2
 set viminfo=
 set nobackup
 set nowritebackup
-
-" The Silver Searcher
-if executable('ag')
-  " Use ag over grep
-  set grepprg=ag\ --nogroup\ --nocolor
-
-  " Use ag in CtrlP for listing files. Lightning fast and respects .gitignore
-  let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
-
-  " ag is fast enough that CtrlP doesn't need to cache
-  let g:ctrlp_use_caching = 0
-endif
 
 function! StatuslineTrailingSpaceWarning()
   if !exists("b:statusline_trailing_space_warning")
@@ -301,7 +361,6 @@ let g:NERDTreeMouseMode = 2
 let g:NERDTreeWinSize = 40
 "
 "explorer mappings
-nnoremap <f1> :BufExplorer<cr>
 nnoremap <f2> :NERDTreeToggle<cr>
 nnoremap <f3> :Explore<cr>
 
