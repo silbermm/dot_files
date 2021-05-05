@@ -50,12 +50,12 @@ plugins=(git vi-mode mix)
 # User configuration
 
 export PATH=$HOME/bin:/usr/local/bin:$PATH
-export PATH=$HOME/.gem/ruby/2.5.0/bin:$HOME/.local/bin:$HOME/.cargo/bin:$PATH
+export PATH=$HOME/.gem/ruby/2.6.0/bin:$HOME/.local/bin:$HOME/.cargo/bin:$PATH
 export DEFAULT_USER=silbermm
 
 # Preferred editor for local and remote sessions
 export EDITOR='vim'
-export BROWSER="chromium"
+export BROWSER="firefox"
 export ERL_AFLAGS="-kernel shell_history enabled"
 
 # Compilation flags
@@ -96,3 +96,11 @@ else
     print "404: ~/.zsh/zshprivate not found."
 fi
 fpath+=~/.zfunc
+
+fh() {
+  eval $( ([ -n "$ZSH_NAME" ] && fc -l 1 || history) | fzf +s --tac | sed -r 's/ *[0-9]*\*? *//' | sed -r 's/\\/\\\\/g')
+}
+
+# tabtab source for electron-forge package
+# uninstall by removing these lines or running `tabtab uninstall electron-forge`
+[[ -f /home/silbermm/Projects/gb-studio/node_modules/tabtab/.completions/electron-forge.zsh ]] && . /home/silbermm/Projects/gb-studio/node_modules/tabtab/.completions/electron-forge.zsh
